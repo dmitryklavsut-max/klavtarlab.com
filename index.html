@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KLAVTAR LAB — Building TelegaOS</title>
+<meta name="description" content="KLAVTAR LAB — independent R&D lab building TelegaOS, a conversational OS powered by self-organizing AI agent society on Telegram.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#14141f;--border:#222235;--text:#e8e8f0;--text2:#8888a0;--text3:#555568;--accent:#0088cc;--accent2:#00bbff;--green:#00cc88;--amber:#ffaa00;--font:Sora,sans-serif;--mono:JetBrains Mono,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.12;pointer-events:none}
+.orb{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,136,204,.15) 0%,transparent 70%);filter:blur(80px);pointer-events:none}.orb-1{top:-200px;left:-100px}.orb-2{bottom:-300px;right:-200px;opacity:.5}
+.c{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+section{padding:100px 0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;background:rgba(10,10,15,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+nav .c{display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:3px;color:var(--accent2)}.logo span{color:var(--text3);font-weight:300}
+.nav-links{display:flex;gap:32px}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;transition:color .3s}.nav-links a:hover{color:var(--accent2)}
+.hero{min-height:100vh;display:flex;align-items:center;padding-top:100px}
+.hero-tag{display:inline-block;font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border:1px solid var(--accent);border-radius:2px;margin-bottom:32px;opacity:0;animation:fu .6s ease .2s forwards}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:700;line-height:1.1;margin-bottom:28px;opacity:0;animation:fu .6s ease .4s forwards}
+.grad{background:linear-gradient(135deg,var(--accent2),var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:18px;color:var(--text2);max-width:600px;margin-bottom:40px;opacity:0;animation:fu .6s ease .6s forwards}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fu .6s ease .8s forwards}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.5px;border-radius:3px;text-decoration:none;transition:all .3s;cursor:pointer;border:none}
+.btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent2);box-shadow:0 0 30px rgba(0,136,204,.25)}
+.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-g:hover{border-color:var(--accent);color:var(--accent2)}
+.sbar{display:flex;gap:40px;margin-top:60px;padding-top:30px;border-top:1px solid var(--border);opacity:0;animation:fu .6s ease 1s forwards;flex-wrap:wrap}
+.si{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:1px}.si b{color:var(--green);font-weight:500}
+.stag{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
+.stitle{font-size:clamp(28px,4vw,42px);font-weight:600;margin-bottom:20px;line-height:1.2}
+.sdesc{color:var(--text2);font-size:17px;max-width:600px;margin-bottom:48px}
+.grid{display:grid;gap:24px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:36px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,136,204,.08)}.card:hover::before{opacity:1}
+.card .ic{font-size:28px;margin-bottom:16px;display:block}
+.card h3{font-size:20px;font-weight:600;margin-bottom:12px}
+.card p{color:var(--text2);font-size:15px}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(0,136,204,.1);padding:3px 10px;border-radius:2px;margin-top:16px;letter-spacing:1px}
+.wide{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.term{background:#0d0d14;border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.term-h{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
+.term-t{font-family:var(--mono);font-size:12px;color:var(--text3);margin-left:8px}
+.term-b{padding:20px;font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2)}
+.term-b .g{color:var(--green)}.term-b .a{color:var(--accent2)}.term-b .w{color:var(--amber)}.term-b .d{color:var(--text3)}.term-b .v{color:var(--green)}
+.blink{animation:bl 1s infinite}
+.step{background:var(--surface);padding:32px 24px;text-align:center}
+.step .n{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);opacity:.3;margin-bottom:12px}
+.step h4{font-size:15px;font-weight:600;margin-bottom:8px}
+.step p{font-size:13px;color:var(--text2)}
+.vc{background:var(--surface);border:1px solid var(--border);padding:28px;border-radius:3px}
+.vc .l{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.vc h4{font-size:17px;font-weight:600;margin-bottom:10px}
+.vc p{font-size:14px;color:var(--text2)}
+footer{padding:60px 0;border-top:1px solid var(--border)}
+footer .c{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+footer p{font-size:13px;color:var(--text3)}
+.fl{display:flex;gap:24px}.fl a{color:var(--text3);text-decoration:none;font-size:13px;transition:color .3s}.fl a:hover{color:var(--accent2)}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bl{0%,50%{opacity:1}51%,100%{opacity:0}}
+@media(max-width:768px){.g2,.g3,.wide{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.nav-links{display:none}section{padding:60px 0}.sbar{gap:20px}}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<nav><div class="c">
+  <div class="logo">KLAVTAR <span>LAB</span></div>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#how">How it Works</a>
+    <a href="#vision">Vision</a>
+    <a href="#contact">Contact</a>
+  </div>
+</div></nav>
+
+<section class="hero"><div class="c">
+  <div>
+    <div class="hero-tag">Independent R&D Lab</div>
+    <h1>We build <span class="grad">living systems</span>,<br>not static tools.</h1>
+    <p>KLAVTAR LAB is an independent research lab focused on self-organizing AI agent architectures. Our flagship project &mdash; TelegaOS &mdash; reimagines how humans interact with computers.</p>
+    <div class="hero-btns">
+      <a href="#projects" class="btn btn-p">Explore TelegaOS</a>
+      <a href="#contact" class="btn btn-g">Get in Touch</a>
+    </div>
+    <div class="sbar">
+      <div class="si">STATUS <b>ACTIVE</b></div>
+      <div class="si">PHASE <b>0 &mdash; MVP</b></div>
+      <div class="si">STACK <b>PYTHON + TELEGRAM + TON</b></div>
+      <div class="si">INFRA <b>COCOON</b></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="projects"><div class="c">
+  <div class="stag">01 / Projects</div>
+  <h2 class="stitle">TelegaOS</h2>
+  <p class="sdesc">A conversational operating system that turns Telegram into an AI-powered interface between humans and machines. No apps to install. No interfaces to learn. Just chat.</p>
+
+  <div class="grid g2">
+    <div class="card wide">
+      <div>
+        <div class="ic">&#127758;</div>
+        <h3>Agent Society</h3>
+        <p>Under the hood: a self-organizing society of AI agents with social structure. Agents are born, evolve, compete, and die. Natural selection ensures the system optimizes itself. Governed by a Triad &mdash; Legislator, Executor, Judge &mdash; elected by performance metrics.</p>
+        <div class="tag">CORE ENGINE</div>
+      </div>
+      <div>
+        <div class="term">
+          <div class="term-h">
+            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+            <div class="term-t">genesis.log</div>
+          </div>
+          <div class="term-b">
+            <span class="d">[day 1]</span> <span class="g">Adam</span>: Deploying infrastructure...<br>
+            <span class="d">[day 1]</span> <span class="a">Eve</span>: Setting up TelegaOS shell...<br>
+            <span class="d">[day 2]</span> <span class="g">Adam</span>: Scan complete. Profile: developer.<br>
+            <span class="d">[day 2]</span> <span class="a">Eve</span>: Psychological portrait built.<br>
+            <span class="d">[day 3]</span> <span class="g">Adam</span>: 3 worker agents created.<br>
+            <span class="d">[day 4]</span> <span class="w">Triad</span>: Legislator, Executor, Judge born.<br>
+            <span class="d">[day 7]</span> Adam &amp; Eve &rarr; Cemetery. <span class="v">System alive.</span><span class="blink">_</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ic">&#128241;</div>
+      <h3>Telegram-Native</h3>
+      <p>Built on TDLib + Bot API + Mini Apps. Not a wrapper &mdash; a new interaction paradigm within the world's most open messenger. 1B+ users already have the client.</p>
+      <div class="tag">HYBRID ARCHITECTURE</div>
+    </div>
+    <div class="card">
+      <div class="ic">&#128176;</div>
+      <h3>Token Economy</h3>
+      <p>Built-in tokenomics with Telegram Stars and TON. Agents compete for efficiency. Users earn through distributed compute marketplace. Powered by Cocoon.</p>
+      <div class="tag">COCOON + TON</div>
+    </div>
+    <div class="card">
+      <div class="ic">&#129516;</div>
+      <h3>Genetic Evolution</h3>
+      <p>Every agent carries DNA &mdash; inherited traits + unique skills. Generations improve through heredity. Anti-cloning passport system with blockchain identity verification.</p>
+      <div class="tag">SELF-OPTIMIZATION</div>
+    </div>
+    <div class="card">
+      <div class="ic">&#127760;</div>
+      <h3>Distributed Network</h3>
+      <p>Societies connect. Agents transfer between users with passport control and customs. Skill mining creates real value. GPU owners earn TON through Cocoon compute.</p>
+      <div class="tag">PHASE 4</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="how"><div class="c">
+  <div class="stag">02 / How it works</div>
+  <h2 class="stitle">From message to result</h2>
+  <p class="sdesc">The user sends one message. The society handles the rest.</p>
+  <div class="grid g4">
+    <div class="step"><div class="n">01</div><h4>User writes</h4><p>"Remove the background from this image."</p></div>
+    <div class="step"><div class="n">02</div><h4>Legislator plans</h4><p>Analyzes task, decomposes, creates execution instruction.</p></div>
+    <div class="step"><div class="n">03</div><h4>Executor delegates</h4><p>Picks optimal agent stack: local app, cloud API, or specialized agent.</p></div>
+    <div class="step"><div class="n">04</div><h4>Result in chat</h4><p>Image without background. Judge scores quality. Tokens logged.</p></div>
+  </div>
+</div></section>
+
+<section id="vision"><div class="c">
+  <div class="stag">03 / Vision</div>
+  <h2 class="stitle">Where we're going</h2>
+  <div class="grid g3">
+    <div class="vc"><div class="l">Near Term</div><h4>MVP on Telegram</h4><p>Genesis flow, working Triad, basic task pipeline. Bot API first, Mini Apps for dashboards. Cocoon integration for private inference.</p></div>
+    <div class="vc"><div class="l">Mid Term</div><h4>Custom TDLib Client</h4><p>Full TelegaOS shell with modified UI. Agent zones, status panels, custom notifications. Financial advisor with subscription optimization.</p></div>
+    <div class="vc"><div class="l">Long Term</div><h4>Distributed Society</h4><p>Inter-society network. Agent marketplace. Skill mining. TON-based token economy. A living, global ecosystem of AI agents.</p></div>
+  </div>
+</div></section>
+
+<section id="contact"><div class="c">
+  <div class="stag">04 / Contact</div>
+  <h2 class="stitle">Let's build together</h2>
+  <p class="sdesc">KLAVTAR LAB is open to partnerships, investment discussions, and technical collaborations. We're especially interested in connecting with the Telegram and TON ecosystems.</p>
+  <div class="grid g3">
+    <div class="card" style="text-align:center"><div class="ic">&#128172;</div><h3>Telegram</h3><p style="color:var(--accent2)">@snoockey</p></div>
+    <div class="card" style="text-align:center"><div class="ic">&#128231;</div><h3>Email</h3><p style="color:var(--accent2)">hello@github.com/dmitryklavsut-max</p></div>
+    <div class="card" style="text-align:center"><div class="ic">&#128025;</div><h3>GitHub</h3><p style="color:var(--accent2)">github.com/dmitryklavsut-max</p></div>
+  </div>
+</div></section>
+
+<footer><div class="c">
+  <p>&copy; 2026 KLAVTAR LAB. Independent R&D.</p>
+  <div class="fl">
+    <a href="https://github.com/dmitryklavsut-max">GitHub</a>
+    <a href="#">GitHub</a>
+    <a href="#">Telegram</a>
+  </div>
+</div></footer>
+
+</body>
+</html>

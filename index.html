@@ -1,209 +1,205 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KLAVTAR LAB — Building TelegaOS</title>
-<meta name="description" content="KLAVTAR LAB — independent R&D lab building TelegaOS, a conversational OS powered by self-organizing AI agent society on Telegram.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KLAVTAR Lab — AI engineering for business</title>
+<meta name="description" content="KLAVTAR Lab is the engineering team of KLAVTAR Sp. z o.o. in Łódź, Poland. We build and operate AI agents, data pipelines and web platforms for companies.">
+<link rel="canonical" href="https://klavtarlab.com/">
+<link rel="alternate" hreflang="en" href="https://klavtarlab.com/"><link rel="alternate" hreflang="pl" href="https://klavtarlab.com/pl/"><link rel="alternate" hreflang="ru" href="https://klavtarlab.com/ru/">
+<link rel="alternate" hreflang="x-default" href="https://klavtarlab.com/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="KLAVTAR Lab — AI engineering for business">
+<meta property="og:description" content="KLAVTAR Lab is the engineering team of KLAVTAR Sp. z o.o. in Łódź, Poland. We build and operate AI agents, data pipelines and web platforms for companies.">
+<meta property="og:url" content="https://klavtarlab.com/">
+<meta property="og:image" content="https://klavtarlab.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#edeff2">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0a0a0f;--surface:#14141f;--border:#222235;--text:#e8e8f0;--text2:#8888a0;--text3:#555568;--accent:#0088cc;--accent2:#00bbff;--green:#00cc88;--amber:#ffaa00;--font:Sora,sans-serif;--mono:JetBrains Mono,monospace}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.7;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.12;pointer-events:none}
-.orb{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,136,204,.15) 0%,transparent 70%);filter:blur(80px);pointer-events:none}.orb-1{top:-200px;left:-100px}.orb-2{bottom:-300px;right:-200px;opacity:.5}
-.c{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
-section{padding:100px 0}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;background:rgba(10,10,15,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-nav .c{display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:3px;color:var(--accent2)}.logo span{color:var(--text3);font-weight:300}
-.nav-links{display:flex;gap:32px}
-.nav-links a{color:var(--text2);text-decoration:none;font-size:14px;transition:color .3s}.nav-links a:hover{color:var(--accent2)}
-.hero{min-height:100vh;display:flex;align-items:center;padding-top:100px}
-.hero-tag{display:inline-block;font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border:1px solid var(--accent);border-radius:2px;margin-bottom:32px;opacity:0;animation:fu .6s ease .2s forwards}
-.hero h1{font-size:clamp(40px,6vw,72px);font-weight:700;line-height:1.1;margin-bottom:28px;opacity:0;animation:fu .6s ease .4s forwards}
-.grad{background:linear-gradient(135deg,var(--accent2),var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:18px;color:var(--text2);max-width:600px;margin-bottom:40px;opacity:0;animation:fu .6s ease .6s forwards}
-.hero-btns{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fu .6s ease .8s forwards}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.5px;border-radius:3px;text-decoration:none;transition:all .3s;cursor:pointer;border:none}
-.btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent2);box-shadow:0 0 30px rgba(0,136,204,.25)}
-.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}.btn-g:hover{border-color:var(--accent);color:var(--accent2)}
-.sbar{display:flex;gap:40px;margin-top:60px;padding-top:30px;border-top:1px solid var(--border);opacity:0;animation:fu .6s ease 1s forwards;flex-wrap:wrap}
-.si{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:1px}.si b{color:var(--green);font-weight:500}
-.stag{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px}
-.stitle{font-size:clamp(28px,4vw,42px);font-weight:600;margin-bottom:20px;line-height:1.2}
-.sdesc{color:var(--text2);font-size:17px;max-width:600px;margin-bottom:48px}
-.grid{display:grid;gap:24px}
-.g2{grid-template-columns:1fr 1fr}
-.g3{grid-template-columns:1fr 1fr 1fr}
-.g4{grid-template-columns:repeat(4,1fr)}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:36px;transition:all .4s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .4s}
-.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,136,204,.08)}.card:hover::before{opacity:1}
-.card .ic{font-size:28px;margin-bottom:16px;display:block}
-.card h3{font-size:20px;font-weight:600;margin-bottom:12px}
-.card p{color:var(--text2);font-size:15px}
-.tag{display:inline-block;font-family:var(--mono);font-size:11px;color:var(--accent);background:rgba(0,136,204,.1);padding:3px 10px;border-radius:2px;margin-top:16px;letter-spacing:1px}
-.wide{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:36px}
-.term{background:#0d0d14;border:1px solid var(--border);border-radius:4px;overflow:hidden}
-.term-h{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
-.dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
-.term-t{font-family:var(--mono);font-size:12px;color:var(--text3);margin-left:8px}
-.term-b{padding:20px;font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2)}
-.term-b .g{color:var(--green)}.term-b .a{color:var(--accent2)}.term-b .w{color:var(--amber)}.term-b .d{color:var(--text3)}.term-b .v{color:var(--green)}
-.blink{animation:bl 1s infinite}
-.step{background:var(--surface);padding:32px 24px;text-align:center}
-.step .n{font-family:var(--mono);font-size:36px;font-weight:700;color:var(--accent);opacity:.3;margin-bottom:12px}
-.step h4{font-size:15px;font-weight:600;margin-bottom:8px}
-.step p{font-size:13px;color:var(--text2)}
-.vc{background:var(--surface);border:1px solid var(--border);padding:28px;border-radius:3px}
-.vc .l{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
-.vc h4{font-size:17px;font-weight:600;margin-bottom:10px}
-.vc p{font-size:14px;color:var(--text2)}
-footer{padding:60px 0;border-top:1px solid var(--border)}
-footer .c{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
-footer p{font-size:13px;color:var(--text3)}
-.fl{display:flex;gap:24px}.fl a{color:var(--text3);text-decoration:none;font-size:13px;transition:color .3s}.fl a:hover{color:var(--accent2)}
-@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes bl{0%,50%{opacity:1}51%,100%{opacity:0}}
-@media(max-width:768px){.g2,.g3,.wide{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.nav-links{display:none}section{padding:60px 0}.sbar{gap:20px}}
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Unbounded:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css?v=20261013">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "KLAVTAR Sp. z o.o.", "alternateName": "KLAVTAR Lab", "url": "https://klavtarlab.com", "email": "klavtarlab@gmail.com", "telephone": "+48 452 757 996", "taxID": "7272859792", "address": {"@type": "PostalAddress", "streetAddress": "ul. Siewna 15, lok. C002", "postalCode": "94-250", "addressLocality": "Łódź", "addressCountry": "PL"}}</script>
 </head>
 <body>
-
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-<nav><div class="c">
-  <div class="logo">KLAVTAR <span>LAB</span></div>
-  <div class="nav-links">
-    <a href="#projects">Projects</a>
-    <a href="#how">How it Works</a>
-    <a href="#vision">Vision</a>
-    <a href="#contact">Contact</a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="/" aria-label="KLAVTAR Lab"><svg viewBox="-16 -16 32 32" aria-hidden="true"><line x1="-0.00" y1="-6.20" x2="-0.00" y2="-10.20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="2.37" y1="-5.73" x2="4.67" y2="-11.27" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="4.38" y1="-4.38" x2="10.75" y2="-10.75" stroke="#2f3beb" stroke-width="1.6" stroke-linecap="round"/><line x1="5.73" y1="-2.37" x2="10.35" y2="-4.29" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="6.20" y1="0.00" x2="13.20" y2="0.00" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="5.73" y1="2.37" x2="8.50" y2="3.52" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="4.38" y1="4.38" x2="10.04" y2="10.04" stroke="#2f3beb" stroke-width="1.6" stroke-linecap="round"/><line x1="2.37" y1="5.73" x2="4.29" y2="10.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-0.00" y1="6.20" x2="-0.00" y2="10.20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-2.37" y1="5.73" x2="-4.67" y2="11.27" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-4.38" y1="4.38" x2="-10.75" y2="10.75" stroke="#2f3beb" stroke-width="1.6" stroke-linecap="round"/><line x1="-5.73" y1="2.37" x2="-9.42" y2="3.90" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-6.20" y1="-0.00" x2="-13.20" y2="-0.00" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-5.73" y1="-2.37" x2="-10.35" y2="-4.29" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-4.38" y1="-4.38" x2="-6.51" y2="-6.51" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="-2.37" y1="-5.73" x2="-4.67" y2="-11.27" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>KLAVTAR <small>Lab</small></span></a>
+    <nav class="nav" aria-label="Main"><a href="/#services">Services</a><a href="/#products">Products</a><a href="/#clients">Clients</a><a href="/#process">Process</a><a href="/#company">Company</a></nav>
+    <div class="langs" aria-label="Language"><a href="/" hreflang="en" lang="en" aria-current="page">EN</a><a href="/pl/" hreflang="pl" lang="pl">PL</a><a href="/ru/" hreflang="ru" lang="ru">RU</a></div>
+    <a class="btn btn-ink header-cta" href="/#contact">Discuss a project</a>
+    <button class="menu-btn" type="button" aria-expanded="false">Menu</button>
   </div>
-</div></nav>
+</header>
+<main id="main">
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1>We build AI systems for business — and run our own company on them.</h1>
+      <p class="lead">KLAVTAR Lab is the engineering team of KLAVTAR Sp. z o.o. in Łódź. We design, build and operate AI agents, data pipelines and web platforms for companies in the EU and Southeast Asia.</p>
+      <div class="hero-actions"><a class="btn btn-ink" href="#contact">Discuss a project</a><a class="btn btn-ghost" href="#products">See our work</a></div>
+    </div>
+    <figure class="wheel-fig">
+      <div class="wheel" id="wheel" data-orders='[1, 0, 2, 3, 0, 2, 2, 3, 9, 1, 5, 2, 1, 2, 3, 4, 2, 2, 2, 1, 2, 4, 3, 3, 1, 4, 4, 3, 1, 3, 3, 1, 5, 2, 4, 2, 10, 10, 6, 5, 10, 5, 6, 8, 4, 7, 8, 17, 13, 21, 18, 11, 11, 15, 12, 20, 25, 11, 14, 14, 9, 9, 8, 10, 8, 7, 8, 9, 4, 4, 6, 4, 3, 2, 4, 1, 2, 6, 3, 2, 3, 5, 4, 2, 3, 1, 3, 5, 1, 3, 5, 4, 3, 7, 7, 3, 4, 4, 5, 1, 5, 3, 2, 1, 4, 1, 4, 1, 1, 4, 4, 22, 20, 23, 26, 20, 21, 18, 26, 18, 25, 27, 19, 27, 20, 24, 15, 23, 21, 17, 26, 21, 22, 21, 18, 17, 31, 27, 26, 25, 17, 25, 26, 33, 20, 21, 22, 21, 17, 24, 25, 18, 14, 19, 18, 15, 17, 21, 12, 20, 19, 25, 22, 26, 23, 26, 22, 19, 15, 29, 6, 20, 16, 17, 6, 22, 22, 19, 15, 19, 14, 27, 28, 16, 25, 25, 30, 11, 18, 27, 31, 21, 24, 16, 23, 21, 15, 18, 24, 30, 13, 24, 19, 38, 31, 26, 24, 27, 24, 19, 26, 20, 19, 23, 25, 18, 32, 36, 32, 24, 27, 19, 25, 24, 21, 26, 28, 35, 23, 32, 26, 31, 26, 21, 24, 29, 15, 19, 24, 19, 31, 29, 28, 17, 16, 30, 32, 24, 19, 10, 15, 25, 20, 29, 16, 14, 24, 15, 10, 17, 16, 13, 24, 21, 17, 21, 23, 25, 32, 27, 22, 20, 21, 34, 19, 23, 32, 23, 24, 17, 19, 34, 26, 14, 27, 20, 22, 17, 30, 23, 23, 23, 26, 22, 30, 22, 26, 17, 23, 20, 17, 26, 19, 25, 24, 20, 14, 20, 18, 18, 22, 29, 20, 15, 15, 24, 22, 24, 32, 20, 19, 10, 15, 20, 21, 18, 18, 16, 15, 24, 21, 19, 18, 24, 19, 17, 26, 16, 19, 19, 20, 14, 21, 22, 24, 21, 17, 18, 12, 17, 23, 27, 22, 18, 17, 22, 16, 24, 18, 24, 16, 18, 18, 24, 26]' data-months='["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]' data-label="Each line is one day of Etsy orders handled by ShopFlow, our own platform, from 13 Oct 2025 to 12 Oct 2026. The longest lines are the busiest days." data-orders-word="orders">
+        <div class="wheel-center"><b>6,000+</b><span>orders in 12 months</span></div>
+      </div>
+      <figcaption>Each line is one day of Etsy orders handled by ShopFlow, our own platform, from 13 Oct 2025 to 12 Oct 2026. The longest lines are the busiest days.</figcaption>
+    </figure>
+  </div>
+</section>
 
-<section class="hero"><div class="c">
+<section class="facts" aria-label="Facts"><div class="wrap"><ul><li><b data-count="21" data-suffix="">21</b><span>Etsy shops run on our own AI platform</span></li><li><b data-count="6000" data-suffix="+">6,000+</b><span>orders processed in the last 12 months</span></li><li><b data-count="5" data-suffix="">5</b><span>products we built and operate</span></li><li><b data-count="2022" data-suffix="" data-plain="1">2022</b><span>registered in Łódź, KRS 0000977627</span></li></ul></div></section>
+
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="sec-head"><h2>What we do</h2><p class="lead">We take on work where AI has to do a real job inside a business process. Every service below is something we already run for ourselves or for a client.</p></div>
+    <ul class="services"><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="9" r="3.5"/><circle cx="26" cy="9" r="3.5"/><circle cx="17" cy="25" r="3.5"/><path d="M11.5 9h11M10 12l5 10M24 12l-5 10"/></svg></span><div><h3>AI agents and automation</h3><p>Agents that read your data, propose actions and carry them out within the permissions you set: publishing, replying to customers, routing orders, writing reports. Every action is logged and can require approval.</p></div><p class="proof"><em>Where it runs</em>ShopFlow: agents manage listings, reviews and orders for 21 Etsy shops.</p></li><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12l12-6 12 6-12 6z"/><path d="M5 18l12 6 12-6"/><path d="M5 23.5l12 6 12-6"/></svg></span><div><h3>AI inside your existing systems</h3><p>Language-model features added to the tools your team already uses: document and invoice processing, search over company knowledge, classification and drafting. We pick the model per task — Claude, GPT, Gemini, DeepSeek or open-weight models.</p></div><p class="proof"><em>Where it runs</em>Our own monthly accounting package for 17 shops is assembled automatically from bank and marketplace statements.</p></li><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="8" width="24" height="18" rx="2"/><path d="M5 21h24"/><circle cx="25" cy="23.5" r="1" fill="currentColor"/><path d="M14 15v-2a3 3 0 016 0v2"/><rect x="12.5" y="15" width="9" height="4" rx="1"/></svg></span><div><h3>Private AI on your hardware</h3><p>Local models on dedicated machines for companies that can&#x27;t send data to the cloud: law and accounting firms, medical practices, manufacturers. Designed around GDPR and the EU AI Act.</p></div><p class="proof"><em>Where it runs</em>SQWADY: compact AI devices that run agents offline.</p></li><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="6" width="26" height="22" rx="2"/><path d="M4 12h26M12 12v16"/></svg></span><div><h3>Web platforms and SaaS</h3><p>Multi-tenant products with accounts, roles, payments and admin panels on Next.js, Supabase and Cloudflare. We ship, then stay on to operate and develop the product.</p></div><p class="proof"><em>Where it runs</em>ShopFlow, Heartysan and Młodzik are in production and used every day.</p></li><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 28h24"/><path d="M9 24v-7M15 24V9M21 24v-11M27 24v-4"/></svg></span><div><h3>Data pipelines and analytics</h3><p>Collecting, cleaning and structuring large data sets: scraping, font and markup deobfuscation, ETL, dashboards and alerts. Numbers you can make decisions on.</p></div><p class="proof"><em>Where it runs</em>Dzen Drive: 237,924 vehicle listings indexed into a curated catalogue.</p></li><li><span class="glyph"><svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 25l8-8 5 5 11-11"/><path d="M22 11h7v7"/></svg></span><div><h3>Websites, SEO and paid growth</h3><p>Corporate websites with technical SEO, content, localisation and ad campaigns, delivered as one contract with clear stages and acceptance.</p></div><p class="proof"><em>Where it runs</em>Kirana Global Hub and Jari Jari Group, Bali, Indonesia.</p></li></ul>
+  </div>
+</section>
+
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="sec-head"><h2>Products we built and run</h2><p class="lead">We build for our own businesses first. When a product holds up under real load, we open it to others and bring the same approach to client projects.</p></div>
+    <article class="product">
+  <figure class="frame reveal"><div class="frame-bar"><i></i><i></i><i></i><span class="addr">shopflow.studio</span></div><a href="/work/shopflow/" tabindex="-1" aria-hidden="true"><img class="frame-shot" src="/assets/work/shopflow-a.webp" alt="ShopFlow: AI platform for Etsy sellers" width="1440" height="900" loading="lazy" decoding="async"></a></figure>
   <div>
-    <div class="hero-tag">Independent R&D Lab</div>
-    <h1>We build <span class="grad">living systems</span>,<br>not static tools.</h1>
-    <p>KLAVTAR LAB is an independent research lab focused on self-organizing AI agent architectures. Our flagship project &mdash; TelegaOS &mdash; reimagines how humans interact with computers.</p>
-    <div class="hero-btns">
-      <a href="#projects" class="btn btn-p">Explore TelegaOS</a>
-      <a href="#contact" class="btn btn-g">Get in Touch</a>
-    </div>
-    <div class="sbar">
-      <div class="si">STATUS <b>ACTIVE</b></div>
-      <div class="si">PHASE <b>0 &mdash; MVP</b></div>
-      <div class="si">STACK <b>PYTHON + TELEGRAM + TON</b></div>
-      <div class="si">INFRA <b>COCOON</b></div>
-    </div>
+    <h3>ShopFlow</h3>
+    <p class="kind">AI platform for Etsy sellers</p>
+    <p class="line">Listings, photos, analytics, renewals and orders for multi-shop sellers in one dashboard.</p>
+    <dl class="mini-facts"><div><dt>21</dt><dd>Etsy shops connected</dd></div><div><dt>6,000+</dt><dd>orders in 12 months</dd></div><div><dt>850+</dt><dd>active listings managed</dd></div></dl>
+    <div class="links"><a class="btn btn-ghost" href="/work/shopflow/">Read the case</a><a class="link" href="https://www.shopflow.studio" rel="noopener" target="_blank">shopflow.studio</a></div>
   </div>
-</div></section>
-
-<section id="projects"><div class="c">
-  <div class="stag">01 / Projects</div>
-  <h2 class="stitle">TelegaOS</h2>
-  <p class="sdesc">A conversational operating system that turns Telegram into an AI-powered interface between humans and machines. No apps to install. No interfaces to learn. Just chat.</p>
-
-  <div class="grid g2">
-    <div class="card wide">
-      <div>
-        <div class="ic">&#127758;</div>
-        <h3>Agent Society</h3>
-        <p>Under the hood: a self-organizing society of AI agents with social structure. Agents are born, evolve, compete, and die. Natural selection ensures the system optimizes itself. Governed by a Triad &mdash; Legislator, Executor, Judge &mdash; elected by performance metrics.</p>
-        <div class="tag">CORE ENGINE</div>
-      </div>
-      <div>
-        <div class="term">
-          <div class="term-h">
-            <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-            <div class="term-t">genesis.log</div>
-          </div>
-          <div class="term-b">
-            <span class="d">[day 1]</span> <span class="g">Adam</span>: Deploying infrastructure...<br>
-            <span class="d">[day 1]</span> <span class="a">Eve</span>: Setting up TelegaOS shell...<br>
-            <span class="d">[day 2]</span> <span class="g">Adam</span>: Scan complete. Profile: developer.<br>
-            <span class="d">[day 2]</span> <span class="a">Eve</span>: Psychological portrait built.<br>
-            <span class="d">[day 3]</span> <span class="g">Adam</span>: 3 worker agents created.<br>
-            <span class="d">[day 4]</span> <span class="w">Triad</span>: Legislator, Executor, Judge born.<br>
-            <span class="d">[day 7]</span> Adam &amp; Eve &rarr; Cemetery. <span class="v">System alive.</span><span class="blink">_</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ic">&#128241;</div>
-      <h3>Telegram-Native</h3>
-      <p>Built on TDLib + Bot API + Mini Apps. Not a wrapper &mdash; a new interaction paradigm within the world's most open messenger. 1B+ users already have the client.</p>
-      <div class="tag">HYBRID ARCHITECTURE</div>
-    </div>
-    <div class="card">
-      <div class="ic">&#128176;</div>
-      <h3>Token Economy</h3>
-      <p>Built-in tokenomics with Telegram Stars and TON. Agents compete for efficiency. Users earn through distributed compute marketplace. Powered by Cocoon.</p>
-      <div class="tag">COCOON + TON</div>
-    </div>
-    <div class="card">
-      <div class="ic">&#129516;</div>
-      <h3>Genetic Evolution</h3>
-      <p>Every agent carries DNA &mdash; inherited traits + unique skills. Generations improve through heredity. Anti-cloning passport system with blockchain identity verification.</p>
-      <div class="tag">SELF-OPTIMIZATION</div>
-    </div>
-    <div class="card">
-      <div class="ic">&#127760;</div>
-      <h3>Distributed Network</h3>
-      <p>Societies connect. Agents transfer between users with passport control and customs. Skill mining creates real value. GPU owners earn TON through Cocoon compute.</p>
-      <div class="tag">PHASE 4</div>
-    </div>
+</article><article class="product">
+  <figure class="frame reveal"><div class="frame-bar"><i></i><i></i><i></i><span class="addr">heartysan.com</span></div><a href="/work/heartysan/" tabindex="-1" aria-hidden="true"><img class="frame-shot" src="/assets/work/heartysan-a.webp" alt="Heartysan: Personalised poster studio and store" width="1440" height="900" loading="lazy" decoding="async"></a></figure>
+  <div>
+    <h3>Heartysan</h3>
+    <p class="kind">Personalised poster studio and store</p>
+    <p class="line">Customers design sound-wave, star-map, city-map and moon posters in the browser; the studio exports print-ready files.</p>
+    <dl class="mini-facts"><div><dt>6</dt><dd>design generators</dd></div><div><dt>3MF · STL</dt><dd>export for multi-colour 3D printing</dd></div><div><dt>4</dt><dd>metal finishes plus paper and frames</dd></div></dl>
+    <div class="links"><a class="btn btn-ghost" href="/work/heartysan/">Read the case</a><a class="link" href="https://heartysan.com" rel="noopener" target="_blank">heartysan.com</a></div>
   </div>
-</div></section>
-
-<section id="how"><div class="c">
-  <div class="stag">02 / How it works</div>
-  <h2 class="stitle">From message to result</h2>
-  <p class="sdesc">The user sends one message. The society handles the rest.</p>
-  <div class="grid g4">
-    <div class="step"><div class="n">01</div><h4>User writes</h4><p>"Remove the background from this image."</p></div>
-    <div class="step"><div class="n">02</div><h4>Legislator plans</h4><p>Analyzes task, decomposes, creates execution instruction.</p></div>
-    <div class="step"><div class="n">03</div><h4>Executor delegates</h4><p>Picks optimal agent stack: local app, cloud API, or specialized agent.</p></div>
-    <div class="step"><div class="n">04</div><h4>Result in chat</h4><p>Image without background. Judge scores quality. Tokens logged.</p></div>
+</article><article class="product">
+  <figure class="frame reveal"><div class="frame-bar"><i></i><i></i><i></i><span class="addr">mlodzik.app</span></div><a href="/work/mlodzik/" tabindex="-1" aria-hidden="true"><img class="frame-shot" src="/assets/work/mlodzik-a.webp" alt="Młodzik: App for youth football teams" width="1440" height="900" loading="lazy" decoding="async"></a></figure>
+  <div>
+    <h3>Młodzik</h3>
+    <p class="kind">App for youth football teams</p>
+    <p class="line">Animated tactics board, training tasks, player ratings and parent messages for coaches on the touchline.</p>
+    <dl class="mini-facts"><div><dt>4</dt><dd>match formats, 5×5 to 11×11</dd></div><div><dt>3</dt><dd>languages: PL, EN, RU</dd></div><div><dt>0 zł</dt><dd>for clubs today</dd></div></dl>
+    <div class="links"><a class="btn btn-ghost" href="/work/mlodzik/">Read the case</a><a class="link" href="https://mlodzik.app" rel="noopener" target="_blank">mlodzik.app</a></div>
   </div>
-</div></section>
-
-<section id="vision"><div class="c">
-  <div class="stag">03 / Vision</div>
-  <h2 class="stitle">Where we're going</h2>
-  <div class="grid g3">
-    <div class="vc"><div class="l">Near Term</div><h4>MVP on Telegram</h4><p>Genesis flow, working Triad, basic task pipeline. Bot API first, Mini Apps for dashboards. Cocoon integration for private inference.</p></div>
-    <div class="vc"><div class="l">Mid Term</div><h4>Custom TDLib Client</h4><p>Full TelegaOS shell with modified UI. Agent zones, status panels, custom notifications. Financial advisor with subscription optimization.</p></div>
-    <div class="vc"><div class="l">Long Term</div><h4>Distributed Society</h4><p>Inter-society network. Agent marketplace. Skill mining. TON-based token economy. A living, global ecosystem of AI agents.</p></div>
+</article><article class="product">
+  <figure class="frame reveal"><div class="frame-bar"><i></i><i></i><i></i><span class="addr">sqwady.com</span></div><a href="/work/sqwady/" tabindex="-1" aria-hidden="true"><img class="frame-shot" src="/assets/work/sqwady-a.webp" alt="SQWADY: Personal AI agent and private AI hardware" width="1440" height="900" loading="lazy" decoding="async"></a></figure>
+  <div>
+    <h3>SQWADY</h3>
+    <p class="kind">Personal AI agent and private AI hardware</p>
+    <p class="line">Cloud AI agents connected to Telegram, WhatsApp and email, plus compact devices that run models locally.</p>
+    <dl class="mini-facts"><div><dt>7</dt><dd>AI models in the free plan</dd></div><div><dt>16</dt><dd>ready-made skills</dd></div><div><dt>from $199</dt><dd>for a local AI device</dd></div></dl>
+    <div class="links"><a class="btn btn-ghost" href="/work/sqwady/">Read the case</a><a class="link" href="https://sqwady.com" rel="noopener" target="_blank">sqwady.com</a></div>
   </div>
-</div></section>
-
-<section id="contact"><div class="c">
-  <div class="stag">04 / Contact</div>
-  <h2 class="stitle">Let's build together</h2>
-  <p class="sdesc">KLAVTAR LAB is open to partnerships, investment discussions, and technical collaborations. We're especially interested in connecting with the Telegram and TON ecosystems.</p>
-  <div class="grid g3">
-    <div class="card" style="text-align:center"><div class="ic">&#128172;</div><h3>Telegram</h3><p style="color:var(--accent2)">@snoockey</p></div>
-    <div class="card" style="text-align:center"><div class="ic">&#128231;</div><h3>Email</h3><p style="color:var(--accent2)">klavtarlab@gmail.com</p></div>
-    <div class="card" style="text-align:center"><div class="ic">&#128025;</div><h3>GitHub</h3><p style="color:var(--accent2)">github.com/dmitryklavsut-max</p></div>
+</article><article class="product">
+  <figure class="frame reveal"><div class="frame-bar"><i></i><i></i><i></i><span class="addr">dzendrive.pl</span></div><a href="/work/dzendrive/" tabindex="-1" aria-hidden="true"><img class="frame-shot" src="/assets/work/dzendrive-a.webp" alt="Dzen Drive: Chinese EV import platform" width="1440" height="900" loading="lazy" decoding="async"></a></figure>
+  <div>
+    <h3>Dzen Drive</h3>
+    <p class="kind">Chinese EV import platform</p>
+    <p class="line">Brand catalogue, landed-cost calculator and lead capture for an importer of Chinese electric cars.</p>
+    <dl class="mini-facts"><div><dt>237,924</dt><dd>listings indexed by the pipeline</dd></div><div><dt>9</dt><dd>Chinese car brands in the catalogue</dd></div><div><dt>363</dt><dd>automated tests</dd></div></dl>
+    <div class="links"><a class="btn btn-ghost" href="/work/dzendrive/">Read the case</a><a class="link" href="https://dzendrive.pl" rel="noopener" target="_blank">dzendrive.pl</a></div>
   </div>
-</div></section>
-
-<footer><div class="c">
-  <p>&copy; 2026 KLAVTAR LAB. Independent R&D.</p>
-  <div class="fl">
-    <a href="https://github.com/dmitryklavsut-max">GitHub</a>
-    <a href="#">GitHub</a>
-    <a href="#">Telegram</a>
+</article>
   </div>
-</div></footer>
+</section>
 
+<section class="section" id="clients">
+  <div class="wrap">
+    <div class="sec-head"><h2>Client projects</h2><p class="lead">Contract work for companies outside our group. Every project is split into stages; each stage is delivered, accepted and invoiced on its own.</p></div>
+    <article class="client">
+  <div>
+    <h3>Kirana Global Hub</h3>
+    <p class="meta"><span>PT Kirana Global Hub</span><span>Bali, Indonesia</span><span>Contract 01BA/0726, 2026</span></p>
+  </div>
+  <div class="client-body">
+    <div>
+      <p class="line">Website, content, SEO, database and paid campaigns for an Indonesian business-services group.</p>
+      <ul class="chips"><li>Website</li><li>Content and localisation</li><li>On-page SEO</li><li>Database</li><li>PPC campaigns</li><li>Link building</li></ul>
+      <div class="links"><a class="btn btn-ghost" href="/work/kirana/">Read the case</a><a class="link" href="https://kiranaglobalhub.com" rel="noopener" target="_blank">kiranaglobalhub.com</a></div>
+    </div>
+    <a class="thumb" href="/work/kirana/" tabindex="-1" aria-hidden="true"><img src="/assets/work/kirana-a.webp" alt="" loading="lazy" decoding="async"></a>
+  </div>
+</article><article class="client">
+  <div>
+    <h3>Jari Jari Group</h3>
+    <p class="meta"><span>PT Jari Jari Group</span><span>Bali, Indonesia</span><span>Contract 02BA/0726, 2026</span></p>
+  </div>
+  <div class="client-body">
+    <div>
+      <p class="line">Technical audit, competitor research, SEO strategy and a new website for a Bali-based group.</p>
+      <ul class="chips"><li>Technical audit</li><li>SEO strategy</li><li>Competitor research</li><li>Website design and development</li></ul>
+      <div class="links"><a class="btn btn-ghost" href="/work/jari/">Read the case</a></div>
+    </div>
+    <a class="thumb" href="/work/jari/" tabindex="-1" aria-hidden="true"><img src="/assets/work/jari-cover.webp" alt="" loading="lazy" decoding="async"></a>
+  </div>
+</article>
+  </div>
+</section>
+
+<section class="section" id="process">
+  <div class="wrap">
+    <div class="sec-head solo"><h2>How a project runs</h2></div>
+    <ol class="steps"><li><h3>Discovery</h3><p>A call and a written brief: what the system must do, which data it touches, who approves what. You get a fixed scope and a stage plan.</p></li><li><h3>First working version</h3><p>Early on we ship a version that runs on your real data, so decisions are made on something you can use, not on slides.</p></li><li><h3>Build in stages</h3><p>Each stage has its own deliverable, acceptance and invoice. You can pause or stop after any of them.</p></li><li><h3>Run and improve</h3><p>We deploy, monitor and maintain. AI actions stay logged and reversible, and the system keeps learning from your feedback.</p></li></ol>
+  </div>
+</section>
+
+<section class="section" id="stack">
+  <div class="wrap">
+    <div class="sec-head solo"><h2>Tools we work with</h2></div>
+    <ul class="stack"><li>Next.js</li><li>React</li><li>TypeScript</li><li>Python</li><li>Supabase</li><li>PostgreSQL</li><li>Cloudflare Workers</li><li>D1 · R2</li><li>Vercel</li><li>Claude</li><li>GPT</li><li>Gemini</li><li>DeepSeek</li><li>OpenRouter</li><li>Ollama</li><li>Telegram Bot API</li><li>Stripe</li><li>Playwright</li><li>Bambu Studio</li></ul>
+  </div>
+</section>
+
+<section class="section" id="company">
+  <div class="wrap">
+    <div class="sec-head solo"><h2>About the company</h2></div>
+    <div class="company-grid"><div><p>KLAVTAR Sp. z o.o. was registered in Łódź in 2022. Besides KLAVTAR Lab, the company runs a 200 m² production workshop with laser cutters, UV printers and 3D printers, and a network of Etsy shops selling personalised home décor to customers in the US and EU.</p><p>That business is where our software is tested first: listings, orders, production paperwork and accounting all run through systems we wrote. Clients get tools that have already worked under daily load.</p></div><dl class="legal"><div><dt>Company</dt><dd>KLAVTAR Sp. z o.o.</dd></div><div><dt>KRS</dt><dd>0000977627</dd></div><div><dt>NIP</dt><dd>7272859792</dd></div><div><dt>REGON</dt><dd>522326772</dd></div><div><dt>Address</dt><dd>ul. Siewna 15, lok. C002, 94-250 Łódź, Poland</dd></div><div><dt>Management board</dt><dd>Dmitry Klavsut, President; Ihar Taras, Member</dd></div></dl></div>
+  </div>
+</section>
+
+<section class="section contact" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <h2>Tell us about your project</h2>
+      <p class="lead" style="margin-top:18px">Describe the task in a few sentences. We usually reply within one business day.</p>
+      <form class="form" id="lead-form" action="https://api.klavtarlab.com/lead" method="post" data-sending="Sending…" data-ok="Request sent. We&#x27;ll reply to the email you entered." data-err="The request didn&#x27;t go through. Please email us at klavtarlab@gmail.com." novalidate>
+        <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required maxlength="120"></div>
+        <div class="field"><label for="f-company">Company</label><input id="f-company" name="company" autocomplete="organization" maxlength="160"></div>
+        <div class="field"><label for="f-email">Work email</label><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
+        <div class="field"><label for="f-topic">What do you need?</label><select id="f-topic" name="topic"><option>AI agents and automation</option><option>AI inside existing systems</option><option>Private AI on your hardware</option><option>Web platform or SaaS</option><option>Data pipeline or analytics</option><option>Website, SEO and ads</option><option>Something else</option></select></div>
+        <div class="field full"><label for="f-msg">Message</label><textarea id="f-msg" name="message" required maxlength="4000" placeholder="What should the system do, which data does it touch, and when do you need it?"></textarea></div>
+        <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="form-foot full"><button class="btn btn-ink" type="submit">Send request</button><p class="form-note">We use your details only to answer this request.</p></div>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+    <aside class="direct">
+      <h3>Or write directly</h3>
+      <ul>
+        <li><span>Email</span><a href="mailto:klavtarlab@gmail.com">klavtarlab@gmail.com</a></li>
+        <li><span>Telefon / Phone</span><a href="tel:+48452757996">+48 452 757 996</a></li>
+        <li><span>Telegram</span><a href="https://t.me/snoockey" rel="noopener">@snoockey</a></li>
+        <li><span>KLAVTAR Sp. z o.o.</span><a href="https://www.google.com/maps/search/?api=1&query=Siewna+15+Łódź" rel="noopener">ul. Siewna 15, lok. C002, 94-250 Łódź, Polska</a></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-row">
+    <div>© 2026 KLAVTAR Sp. z o.o. All rights reserved.</div>
+    <div class="footer-legal"><span>KRS 0000977627</span><span>NIP 7272859792</span><span>REGON 522326772</span><span>ul. Siewna 15, lok. C002, 94-250 Łódź, Polska</span></div>
+    <div class="footer-legal"><a href="mailto:klavtarlab@gmail.com">klavtarlab@gmail.com</a><a href="https://github.com/dmitryklavsut-max" rel="noopener">GitHub</a><a href="https://t.me/snoockey" rel="noopener">Telegram</a></div>
+  </div>
+</footer>
+<script src="/assets/site.js?v=20261013" defer></script>
 </body>
 </html>
